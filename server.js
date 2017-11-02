@@ -7,6 +7,7 @@ const schema = buildSchema(`
   type Query {
     user(max: Int = 10): [User]
     hello: String
+    rollDice(numDice: Int!, numSides: Int): [Int]
   }
   type User {
     name: String
@@ -24,6 +25,10 @@ const root = {
   hello: () => {
     return 'Hello World!';
   },
+  rollDice: ({ numDice, numSides }, ...args) => {
+    console.log(numDice, numSides);
+    return [];
+  }
 };
 
 const app = express();
