@@ -13,11 +13,6 @@ const schema = buildSchema(`
   }
 
   type Query {
-    user(max: Int = 10): [User]
-    hello: String
-    getDie(numSides: Int): RandomDie
-    quoteOfTheDay: String
-    random: Float!
     getMessage(id: ID!): Message
   }
 
@@ -31,16 +26,6 @@ const schema = buildSchema(`
     content: String
     author: String
   }
-
-  type User {
-    name: String
-    address: String
-  }
-  type RandomDie {
-    numSides: Int!
-    rollOnce: Int!
-    roll(numRolls: Int!): [Int]
-  }
 `);
 
 // If Message had any complex fields, we'd put them on this object.
@@ -49,20 +34,6 @@ class Message {
     this.id = id;
     this.content = content;
     this.author = author;
-  }
-}
-
-class RandomDie {
-  constructor(numSides) {
-    this.numSides = numSides;
-  }
-
-  rollOnce() {
-    return 1 + Math.floor(Math.random() * this.numSides);
-  }
-
-  roll({ numRolls }) {
-    return [...Array(numRolls)].map(_ => this.rollOnce());
   }
 }
 
@@ -91,23 +62,6 @@ const root = {
     fakeDatabase[id] = input;
     return new Message(id, input);
   },
-  user: (...args) => {
-    // args.forEach(console.log);
-    console.log(args.length);
-    return [];
-  },
-  hello: () => {
-    return 'Hello World!';
-  },
-  getDie: ({ numSides }) => {
-    return new RandomDie(numSides || 6);
-  },
-  random: () => {
-    return Math.random();
-  },
-  quoteOfTheDay: () => {
-    return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within';
-  }
 };
 
 const app = express();
