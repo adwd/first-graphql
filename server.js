@@ -8,6 +8,8 @@ const schema = buildSchema(`
     user(max: Int = 10): [User]
     hello: String
     rollDice(numDice: Int!, numSides: Int): [Int]
+    quoteOfTheDay: String
+    random: Float!
   }
   type User {
     name: String
@@ -26,8 +28,13 @@ const root = {
     return 'Hello World!';
   },
   rollDice: ({ numDice, numSides }, ...args) => {
-    console.log(numDice, numSides);
-    return [];
+    return [...Array(numDice)].map(_ => 1 + Math.floor(Math.random() * numSides));
+  },
+  random: () => {
+    return Math.random();
+  },
+  quoteOfTheDay: () => {
+    return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within';
   }
 };
 
