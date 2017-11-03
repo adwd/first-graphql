@@ -14,6 +14,7 @@ const schema = buildSchema(`
 
   type Query {
     getMessage(id: ID!): Message
+    ip: String
   }
 
   type Mutation {
@@ -62,9 +63,21 @@ const root = {
     fakeDatabase[id] = input;
     return new Message(id, input);
   },
+  ip: ({}, request) => {
+    return request.ip;
+  },
 };
 
+function loggingMiddleware(req, res, next) {
+  console.log('ip:', req.ip);
+  next();
+}
+
+// If you aren't familiar with any of these authentication mechanisms,
+// we recommend using express-jwt because it's simple without sacrificing any future flexibility.
+
 const app = express();
+app.use(loggingMiddleware);
 app.use('/graphql', graphqlHTTP({
   schema,
   rootValue: root,
