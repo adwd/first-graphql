@@ -7,7 +7,7 @@ const schema = buildSchema(`
   type Query {
     user(max: Int = 10): [User]
     hello: String
-    rollDice(numDice: Int!, numSides: Int): [Int]
+    getDie(numSides: Int): RandomDie
     quoteOfTheDay: String
     random: Float!
   }
@@ -15,7 +15,26 @@ const schema = buildSchema(`
     name: String
     address: String
   }
+  type RandomDie {
+    numSides: Int!
+    rollOnce: Int!
+    roll(numRolls: Int!): [Int]
+  }
 `);
+
+class RandomDie {
+  constructor(numSides) {
+    this.numSides = numSides;
+  }
+
+  rollOnce() {
+    return 1 + Math.floor(Math.random() * this.numSides);
+  }
+
+  roll({ numRolls }) {
+    return [...Array(numRolls)].map(_ => this.rollOnce());
+  }
+}
 
 // The root provides a resolver function for each API endpoint
 const root = {
@@ -27,8 +46,8 @@ const root = {
   hello: () => {
     return 'Hello World!';
   },
-  rollDice: ({ numDice, numSides }, ...args) => {
-    return [...Array(numDice)].map(_ => 1 + Math.floor(Math.random() * numSides));
+  getDie: ({ numSides }) => {
+    return new RandomDie(numSides || 6);
   },
   random: () => {
     return Math.random();
